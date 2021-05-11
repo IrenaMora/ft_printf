@@ -1,0 +1,58 @@
+#include "../ft_printf.h"
+
+int	p_get_size_of_digit(unsigned long long digit, int system)
+{
+	int	size;
+
+	if (digit == 0)
+		return (1);
+	size = 0;
+	while (digit != 0)
+	{
+		digit /= system;
+		size++;
+	}
+	return (size);
+}
+
+void	p_is_minus(long *size, unsigned long long *pointer,
+	long *system, int *negative)
+{
+	*negative = 0;
+	*size = p_get_size_of_digit(*pointer, *system);
+	if (*pointer < 0)
+	{
+		*negative = 1;
+		*pointer = -*pointer;
+		(*size)++;
+	}
+}
+
+char	*p_int_to_str(unsigned long long pointer,
+	long system, int upper)
+{
+	int		negative;
+	char	*str;
+	long	size;
+	long	position;
+
+	position = 0;
+	p_is_minus(&size, &pointer, &system, &negative);
+	str = (char *)malloc(size + 1);
+	if (str == NULL)
+		return (NULL);
+	str[0] = '0';
+	while (pointer != 0)
+	{
+		if (pointer % system < 10)
+			str[size - position - 1] = (pointer % system) + 48;
+		else
+			str[size - position - 1] = (pointer % system) + upper;
+		pointer /= system;
+		position++;
+	}
+	if (negative == 1)
+		str[0] = '-';
+	str[size] = '\0';
+	return (str);
+}
